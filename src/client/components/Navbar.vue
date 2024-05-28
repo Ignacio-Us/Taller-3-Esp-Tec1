@@ -1,33 +1,22 @@
 <template>
     <nav class="navbar navbar-expand-lg shadow-lg bg-custom">
-        <div class="col-md-3 p-2 ml">
+        <div class="col-md-3 p-2 ml-1">
+            <button v-if="!showPlayerOne" @click="showPlayerOne = !showPlayerOne" class="btn btn-light">Iniciar Player 1</button>
+            
             <!--Player 1-->
             <h5 v-if="showPlayerOne" class="text-white">Jugador 1</h5>
         </div>
 
         <!--Paginas-->
-        <div class="col-md-6 text-center p-2">
+        <div class="col-md-6 text-center">
             <button class="btn fs-6 text-white">Home</button>
             <button class="btn fs-6 text-white">Scores</button>
         </div>
-        <div class="col-md-2 p-2">
-            <div v-if="!showPlayerTwo">
-                <button @click="showPopover = !showPopover" class="btn btn-light">Iniciar sesion</button>
-            </div>
-
-            <!--Popover-->
-            <div v-if="showPopover" class="shadow-lg popover">
-                <div class="p-2 bg-custom rounded-3 border-white">
-                    <p>
-                        <button @click="showPlayerOne = !showPlayerOne" class="btn btn-light">Player 1</button>
-                    </p>
-                    <p>
-                        <button @click="showPlayerTwo = !showPlayerTwo" class="btn btn-light">Player 2</button>
-                    </p>
-                </div>
-            </div>
+        <div class="col-md-2 p-2 ml-2">
+            <button v-if="!showPlayerTwo" @click="showPlayerTwo = !showPlayerTwo" class="btn btn-light">Iniciar Player 2</button>
+            
             <!--Player 2-->
-            <p v-if="showPlayerTwo" class="text-white">Jugador 2</p>
+            <h5 v-if="showPlayerTwo" class="text-white">Jugador 2</h5>
         </div>
 
 
@@ -39,8 +28,12 @@
     background-color: #1E5128;
 }
 
-.ml {
+.ml-1 {
     margin-left: 12px;
+}
+
+.ml-2{
+    margin-left: 5%;
 }
 
 .popover {
