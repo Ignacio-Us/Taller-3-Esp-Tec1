@@ -53,7 +53,6 @@ button {
 <script setup>
 import { ref } from 'vue';
 
-const showPopover = ref(false);
 const showPlayerOne = ref(false);
 const showPlayerTwo = ref(false);
 </script>
