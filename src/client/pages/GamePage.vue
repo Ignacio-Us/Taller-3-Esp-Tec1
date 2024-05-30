@@ -20,7 +20,8 @@ import backgroundImage from '../assets/game assets/background_glacial_mountains.
 import plataformImage from '../assets/game assets/platform.png';
 import coinImage from '../assets/game assets/brackeys_platformer_assets/sprites/coin.png';
 import playerImage from '../assets/game assets/free-pixel-art-tiny-hero-sprites/1 Pink_Monster/Pink_Monster_Walk_6.png';
-
+import coinSound from '../assets/game assets/brackeys_platformer_assets/sounds/coin.wav';
+import backgroundSound from '../assets/game assets/Musica_de_fondo.mp3';
 
 const gameContainer = ref(null);
 
@@ -45,6 +46,8 @@ const config = {
       this.load.image('platforms', plataformImage);
       this.load.spritesheet('coin', coinImage, { frameWidth: 16, frameHeight: 16 });
       this.load.spritesheet('player', playerImage, { frameWidth: 32, frameHeight: 32 });
+      this.load.audio('coinSound', coinSound);
+      this.load.audio('backgroundSound', backgroundSound);
     },
     create() {
       console.log('Creating scene...');
@@ -109,6 +112,8 @@ const config = {
       this.physics.add.overlap(player, coins, (player, coin) => {
         coin.disableBody(true, true);
 
+        this.sound.play('coinSound');
+
         score.value += 10;
         scoreText.value.setText(`Score P1: ${score.value}`);
         addRandomCoin(this, coins, platforms);
@@ -116,6 +121,8 @@ const config = {
 
       scoreText.value = this.add.text(16, 16, 'Score P1: 0', { fontSize: '32px', fill: '#FFF' });
 
+      this.music = this.sound.add('backgroundSound', { loop: true });
+      this.music.play();
     },
     update() {
       // Lógica de movimiento del jugador
