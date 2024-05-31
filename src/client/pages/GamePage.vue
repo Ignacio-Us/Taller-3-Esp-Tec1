@@ -24,6 +24,8 @@ import coinSound from '../assets/game assets/brackeys_platformer_assets/sounds/c
 import backgroundSound from '../assets/game assets/Musica_de_fondo.mp3';
 
 const gameContainer = ref(null);
+const gameTime = ref(60);
+let timerText;
 
 const score = ref(0);
 const scoreText = ref('');
@@ -119,10 +121,20 @@ const config = {
         addRandomCoin(this, coins, platforms);
       });
 
-      scoreText.value = this.add.text(16, 16, 'Score P1: 0', { fontSize: '32px', fill: '#FFF' });
+      scoreText.value = this.add.text(16, 16, 'Score P1: 0', { fontSize: '16px', fill: '#FFF' });
 
+      // Musica de Fondo
       this.music = this.sound.add('backgroundSound', { loop: true });
       this.music.play();
+
+      // Temporizador
+      timerText = this.add.text(325, 16, ` ${gameTime.value}`, { fontSize: '24px', fill: '#FFF' });
+      this.time.addEvent({
+        delay: 1000,
+        callback: onEvent,
+        callbackScope: this,
+        loop: true
+      });
     },
     update() {
       // Lógica de movimiento del jugador
@@ -143,6 +155,12 @@ const config = {
 
       if (this.cursors.up.isDown && this.player.body.touching.down) {
         this.player.setVelocityY(-330);
+      }
+
+      if (gameTime.value <= 0) {
+        this.scene.pause();
+        this.music.pause();
+        timerText.setText('Game Over');
       }
     }
   }
@@ -173,6 +191,13 @@ function addRandomCoin(scene, coins, platforms) {
 
   if (!placed) {
     console.warn('No se pudo colocar la moneda sin colisión después de múltiples intentos.');
+  }
+}
+
+function onEvent() {
+  if (gameTime.value > 0) {
+    gameTime.value -= 1;
+    timerText.setText(`Time: ${gameTime.value}`)
   }
 }
 
