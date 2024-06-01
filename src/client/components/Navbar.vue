@@ -9,7 +9,8 @@
 
         <!--Paginas-->
         <div class="col-md-6 text-center">
-            <button class="btn fs-4 text-white">Home</button>
+            <RouterLink to="/" class="btn fs-4 text-white font-custom">Home</RouterLink>
+            <RouterLink to="/game" class="btn fs-4 text-white font-custom">Game</RouterLink>
             <button class="btn fs-4 text-white">Scores</button>
         </div>
         <div class="col-md-2 p-2 ml-2">
@@ -48,10 +49,16 @@ button {
     font-family: "Planes_ValMore", sans-serif;
     font-size: small;
 }
+
+.font-custom {
+    font-family: "Planes_ValMore", sans-serif;
+    font-size: small;
+}
 </style>
 
 <script setup>
 import { ref } from 'vue';
+import { RouterLink } from 'vue-router';
 
 const showPlayerOne = ref(false);
 const showPlayerTwo = ref(false);

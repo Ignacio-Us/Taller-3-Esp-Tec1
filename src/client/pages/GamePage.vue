@@ -1,6 +1,5 @@
 <template>
   <Navbar />
-  <br>
   <div class="border border-white border-3" id="game-container" ref="gameContainer"></div>
 </template>
 
@@ -8,7 +7,7 @@
 #game-container {
   width: 805px;
   height: 605px;
-  margin: 0 auto;
+  margin: 50px auto;
 }
 </style>
 
@@ -21,7 +20,7 @@ import plataformImage from '../assets/game assets/platform.png';
 import coinImage from '../assets/game assets/brackeys_platformer_assets/sprites/coin.png';
 import playerImage from '../assets/game assets/free-pixel-art-tiny-hero-sprites/1 Pink_Monster/Pink_Monster_Walk_6.png';
 import coinSound from '../assets/game assets/brackeys_platformer_assets/sounds/coin.wav';
-import backgroundSound from '../assets/game assets/Musica_de_fondo.mp3';
+import backgroundSound from '../assets/game assets/music/Musica_de_fondo_2.mp3';
 
 const gameContainer = ref(null);
 const gameTime = ref(60);
@@ -100,8 +99,10 @@ const config = {
         repeat: -1
       });
 
+      // Teclado
       this.cursors = this.input.keyboard.createCursorKeys();
 
+      // Collider Jugador -> Plataforma
       this.physics.add.collider(player, platforms);
 
       this.player = player;
@@ -121,6 +122,7 @@ const config = {
         addRandomCoin(this, coins, platforms);
       });
 
+      // Puntuacion
       scoreText.value = this.add.text(16, 16, 'Score P1: 0', { fontSize: '16px', fill: '#FFF' });
 
       // Musica de Fondo
