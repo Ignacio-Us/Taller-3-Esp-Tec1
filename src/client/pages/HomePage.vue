@@ -79,9 +79,6 @@
 </template>
 
 <style scoped>
-.font-custom {
-    font-family: "Planes_ValMore", sans-serif;
-}
 
 .ml {
     margin-left: 24px;

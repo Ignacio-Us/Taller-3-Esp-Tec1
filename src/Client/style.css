@@ -2,6 +2,10 @@ body{
   background-color: black;
 }
 
+.font-custom {
+  font-family: "Planes_ValMore", sans-serif;
+}
+
 @font-face {
   font-family: "Planes_ValMore";
   src: url(./assets/Font/Planes_ValMore.ttf) format("truetype");
