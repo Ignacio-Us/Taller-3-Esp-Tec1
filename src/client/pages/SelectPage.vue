@@ -32,21 +32,29 @@
         <div class="col-md-12">
             <div class="row justify-content-center">
                 <div class="col-sm-1">
-                    <button @click="selectMusic('musica1')" class="btn btn-success">Música 1</button>
+                    <button
+                        :class="{ 'btn btn-success': selectedMusic === 'musica1', 'btn btn-outline-success': selectedMusic !== 'musica1' }"
+                        @click="selectMusic('musica1')">Música 1</button>
                 </div>
 
                 <div class="col-sm-1">
-                    <button @click="selectMusic('musica2')" class="btn btn-success">Música 2</button>
+                    <button
+                        :class="{ 'btn btn-success': selectedMusic === 'musica2', 'btn btn-outline-success': selectedMusic !== 'musica2' }"
+                        @click="selectMusic('musica2')">Música 2</button>
                 </div>
 
                 <div class="col-sm-1">
-                    <button @click="selectMusic('musica3')" class="btn btn-success">Música 3</button>
+                    <button
+                        :class="{ 'btn btn-success': selectedMusic === 'musica3', 'btn btn-outline-success': selectedMusic !== 'musica3' }"
+                        @click="selectMusic('musica3')">Música 3</button>
                 </div>
             </div>
         </div>
 
-        <div>
-            <button class="btn btn-light">Play</button>
+        <div class="row justify-content-center mt-5">
+            <div class="col-sm-1">
+                <button @click="saveCharacters()" class="btn btn-light fs-3">Play</button>
+            </div>
         </div>
     </div>
 </template>
@@ -82,7 +90,10 @@ import character2 from '../assets/game assets/free-pixel-art-tiny-hero-sprites/2
 import character3 from '../assets/game assets/free-pixel-art-tiny-hero-sprites/3 Dude_Monster/Dude_Monster.png';
 
 import { useCycleList } from '@vueuse/core';
-import { ref } from 'vue'
+import { useRouter } from 'vue-router';
+import { ref } from 'vue';
+
+const router = useRouter();
 
 const { state, next, prev } = useCycleList([
     character1,
@@ -91,18 +102,33 @@ const { state, next, prev } = useCycleList([
 ]);
 
 
-const selectMusic = (music) =>{
+const selectedMusic = ref('musica1');
+
+const selectMusic = async (music) => {
+
+    let musicPath
+
+    selectedMusic.value = music;
+
     switch (music) {
         case 'musica1':
-            sessionStorage.setItem('musica', '../assets/game assets/music/Musica_de_fondo.mp3')
+            musicPath = await import('../assets/game assets/music/Musica_de_fondo.mp3');
             break;
         case 'musica2':
-            sessionStorage.setItem('musica', '../assets/game assets/music/Musica_de_fondo_2.mp3')
+            musicPath = await import('../assets/game assets/music/Musica_de_fondo_2.mp3');
             break;
         case 'musica3':
-            sessionStorage.setItem('musica', '../assets/game assets/music/Musica_de_fondo_3.mp3')
+            musicPath = await import('../assets/game assets/music/Musica_de_fondo_3.mp3');
             break;
     }
+    sessionStorage.setItem('musica', musicPath.default);
+}
+
+const saveCharacters = () => {
+    const pathImage = state.value.split('/').pop();
+
+    sessionStorage.setItem('player1', pathImage.replace('.png', ''));
+    router.push({ path: '/game' });
 }
 
 </script>

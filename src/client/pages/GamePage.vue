@@ -18,9 +18,19 @@ import Phaser from 'phaser';
 import backgroundImage from '../assets/game assets/background_glacial_mountains.png';
 import plataformImage from '../assets/game assets/platform.png';
 import coinImage from '../assets/game assets/brackeys_platformer_assets/sprites/coin.png';
-import playerImage from '../assets/game assets/free-pixel-art-tiny-hero-sprites/1 Pink_Monster/Pink_Monster_Walk_6.png';
 import coinSound from '../assets/game assets/brackeys_platformer_assets/sounds/coin.wav';
-import backgroundSound from '../assets/game assets/music/Musica_de_fondo_2.mp3';
+import character1Image from '../assets/game assets/free-pixel-art-tiny-hero-sprites/1 Pink_Monster/Pink_Monster_Walk_6.png';
+import character2Image from '../assets/game assets/free-pixel-art-tiny-hero-sprites/2 Owlet_Monster/Owlet_Monster_Walk_6.png';
+import character3Image from '../assets/game assets/free-pixel-art-tiny-hero-sprites/3 Dude_Monster/Dude_Monster_Walk_6.png';
+
+const backgroundMusicPath = sessionStorage.getItem('musica');
+const selectedPlayer = sessionStorage.getItem('player1');
+
+const playerImages = {
+  'Pink_Monster': character1Image,
+  'Owlet_Monster': character2Image,
+  'Dude_Monster': character3Image,
+};
 
 const gameContainer = ref(null);
 const gameTime = ref(60);
@@ -46,9 +56,17 @@ const config = {
       this.load.image('background', backgroundImage);
       this.load.image('platforms', plataformImage);
       this.load.spritesheet('coin', coinImage, { frameWidth: 16, frameHeight: 16 });
-      this.load.spritesheet('player', playerImage, { frameWidth: 32, frameHeight: 32 });
       this.load.audio('coinSound', coinSound);
-      this.load.audio('backgroundSound', backgroundSound);
+      if (backgroundMusicPath) {
+        this.load.audio('backgroundMusic', backgroundMusicPath);
+      }
+
+      console.log(selectedPlayer)
+
+      const playerImagePath = playerImages[selectedPlayer];
+      if (playerImagePath) {
+        this.load.spritesheet('player', playerImagePath, { frameWidth: 32, frameHeight: 32 });
+      }
     },
     create() {
       console.log('Creating scene...');
@@ -126,8 +144,14 @@ const config = {
       scoreText.value = this.add.text(16, 16, 'Score P1: 0', { fontSize: '16px', fill: '#FFF' });
 
       // Musica de Fondo
-      this.music = this.sound.add('backgroundSound', { loop: true });
-      this.music.play();
+      if (backgroundMusicPath) {
+        this.backgroundMusic = this.sound.add('backgroundMusic');
+        if (this.backgroundMusic) {
+          this.backgroundMusic.play({ loop: true });
+        } else {
+          console.error('Background music not found or failed to load.');
+        }
+      }
 
       // Temporizador
       timerText = this.add.text(325, 16, ` ${gameTime.value}`, { fontSize: '24px', fill: '#FFF' });
@@ -161,7 +185,9 @@ const config = {
 
       if (gameTime.value <= 0) {
         this.scene.pause();
-        this.music.pause();
+        if (this.backgroundMusic) {
+          this.backgroundMusic.pause();
+        }
         timerText.setText('Game Over');
       }
     }
