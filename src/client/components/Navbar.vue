@@ -10,7 +10,7 @@
         <!--Paginas-->
         <div class="col-md-6 text-center">
             <RouterLink to="/" class="btn fs-4 text-white font-custom">Home</RouterLink>
-            <RouterLink to="/game" class="btn fs-4 text-white font-custom">Game</RouterLink>
+            <RouterLink to="/selection" class="btn fs-4 text-white font-custom">Game</RouterLink>
             <button class="btn fs-4 text-white">Scores</button>
         </div>
         <div class="col-md-2 p-2 ml-2">

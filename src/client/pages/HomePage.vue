@@ -2,7 +2,7 @@
     <div>
         <Navbar />
         <header class="p-5">
-            <h1 class="text-white text-center font-custom">Nombre del juego</h1>
+            <h1 class="text-white text-center font-custom">PickCoin</h1>
         </header>
         <section class="container mt-5 mb-5">
             <div class="col-10 justify-content-center align-items-center m-auto">

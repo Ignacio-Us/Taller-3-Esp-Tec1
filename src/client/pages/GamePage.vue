@@ -24,9 +24,11 @@ import character2Image from '../assets/game assets/free-pixel-art-tiny-hero-spri
 import character3Image from '../assets/game assets/free-pixel-art-tiny-hero-sprites/3 Dude_Monster/Dude_Monster_Walk_6.png';
 
 const backgroundMusicPath = sessionStorage.getItem('musica');
-const selectedPlayer = sessionStorage.getItem('player1');
+const player1 = sessionStorage.getItem('player1');
+const player2 = sessionStorage.getItem('player2');
 
-const playerImages = {
+
+const playerSkin = {
   'Pink_Monster': character1Image,
   'Owlet_Monster': character2Image,
   'Dude_Monster': character3Image,
@@ -36,8 +38,10 @@ const gameContainer = ref(null);
 const gameTime = ref(60);
 let timerText;
 
-const score = ref(0);
-const scoreText = ref('');
+const score1 = ref(0);
+const score2 = ref(0);
+const scoreTextP1 = ref('');
+const scoreTextP2 = ref('');
 
 const config = {
   type: Phaser.AUTO,
@@ -61,11 +65,17 @@ const config = {
         this.load.audio('backgroundMusic', backgroundMusicPath);
       }
 
-      console.log(selectedPlayer)
+      console.log(player1)
 
-      const playerImagePath = playerImages[selectedPlayer];
-      if (playerImagePath) {
-        this.load.spritesheet('player', playerImagePath, { frameWidth: 32, frameHeight: 32 });
+      const player1ImagePath = playerSkin[player1];
+      if (player1ImagePath) {
+        this.load.spritesheet('player1', player1ImagePath, { frameWidth: 32, frameHeight: 32 });
+      }
+
+      const player2ImagePath = playerSkin[player2];
+      console.log(player2ImagePath)
+      if (player2ImagePath) {
+        this.load.spritesheet('player2', player2ImagePath, { frameWidth: 32, frameHeight: 32 });
       }
     },
     create() {
@@ -84,27 +94,52 @@ const config = {
       platforms.create(700, 125, 'platforms');
       platforms.create(75, 125, 'platforms');
 
-      // Jugador
-      const player = this.physics.add.sprite(100, 450, 'player').setScale(1.5).refreshBody();
-      player.setCollideWorldBounds(true);
+      // Jugador 1
+      const player1 = this.physics.add.sprite(100, 450, 'player1').setScale(1.5).refreshBody();
+      player1.setCollideWorldBounds(true);
 
-      // Animacion Jugador
+      // Animacion Jugador 1
       this.anims.create({
         key: 'left',
-        frames: this.anims.generateFrameNumbers('player', { start: 0, end: 5 }),
+        frames: this.anims.generateFrameNumbers('player1', { start: 0, end: 5 }),
         frameRate: 10,
         repeat: -1
       });
 
       this.anims.create({
         key: 'turn',
-        frames: [{ key: 'player', frame: 5 }],
+        frames: [{ key: 'player1', frame: 5 }],
         frameRate: 20
       });
 
       this.anims.create({
         key: 'right',
-        frames: this.anims.generateFrameNumbers('player', { start: 0, end: 5 }),
+        frames: this.anims.generateFrameNumbers('player1', { start: 0, end: 5 }),
+        frameRate: 10,
+        repeat: -1
+      });
+
+      // Jugador 2
+      const player2 = this.physics.add.sprite(700, 450, 'player2').setScale(1.5).refreshBody();
+      player2.setCollideWorldBounds(true);
+
+      // Animacion Jugador 2
+      this.anims.create({
+        key: 'left2',
+        frames: this.anims.generateFrameNumbers('player2', { start: 0, end: 5 }),
+        frameRate: 10,
+        repeat: -1
+      });
+
+      this.anims.create({
+        key: 'turn2',
+        frames: [{ key: 'player2', frame: 5 }],
+        frameRate: 20
+      });
+
+      this.anims.create({
+        key: 'right2',
+        frames: this.anims.generateFrameNumbers('player2', { start: 0, end: 5 }),
         frameRate: 10,
         repeat: -1
       });
@@ -119,29 +154,54 @@ const config = {
 
       // Teclado
       this.cursors = this.input.keyboard.createCursorKeys();
+      this.wad = {
+        W: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W),
+        A: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A),
+        D: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D)
+      }
 
-      // Collider Jugador -> Plataforma
-      this.physics.add.collider(player, platforms);
+      // Collider Jugador 1 -> Plataforma
+      this.physics.add.collider(player1, platforms);
 
-      this.player = player;
+      this.player1 = player1;
+
+      // Collider Jugador 2 -> Plataforma
+
+      this.physics.add.collider(player2, platforms);
+
+      this.player2 = player2;
 
       // Moneda
       const coins = this.physics.add.group();
       addRandomCoin(this, coins, platforms);
 
       this.physics.add.collider(coins, platforms);
-      this.physics.add.overlap(player, coins, (player, coin) => {
+
+      // Interaccion Jugador 1 on la moneda
+      this.physics.add.overlap(player1, coins, (player1, coin) => {
         coin.disableBody(true, true);
 
         this.sound.play('coinSound');
 
-        score.value += 10;
-        scoreText.value.setText(`Score P1: ${score.value}`);
+        score1.value += 10;
+        scoreTextP1.value.setText(`Score P1: ${score1.value}`);
+        addRandomCoin(this, coins, platforms);
+      });
+
+      // Interaccion Jugador 2 on la moneda
+      this.physics.add.overlap(player2, coins, (player2, coin) => {
+        coin.disableBody(true, true);
+
+        this.sound.play('coinSound');
+
+        score2.value += 10;
+        scoreTextP2.value.setText(`Score P2: ${score2.value}`);
         addRandomCoin(this, coins, platforms);
       });
 
       // Puntuacion
-      scoreText.value = this.add.text(16, 16, 'Score P1: 0', { fontSize: '16px', fill: '#FFF' });
+      scoreTextP1.value = this.add.text(16, 16, 'Score P1: 0', { fontSize: '16px', fill: '#FFF' });
+      scoreTextP2.value = this.add.text(650, 16, 'Score P2: 0', { fontSize: '16px', fill: '#FFF' });
 
       // Musica de Fondo
       if (backgroundMusicPath) {
@@ -163,24 +223,44 @@ const config = {
       });
     },
     update() {
-      // Lógica de movimiento del jugador
+      // Lógica de movimiento del jugador 1
       if (this.cursors.left.isDown) {
-        this.player.setVelocityX(-160);
-        this.player.anims.play('left', true);
-        this.player.flipX = true;
+        this.player1.setVelocityX(-160);
+        this.player1.anims.play('left', true);
+        this.player1.flipX = true;
       }
       else if (this.cursors.right.isDown) {
-        this.player.setVelocityX(160);
-        this.player.anims.play('right', true);
-        this.player.flipX = false;
+        this.player1.setVelocityX(160);
+        this.player1.anims.play('right', true);
+        this.player1.flipX = false;
       }
       else {
-        this.player.setVelocityX(0);
-        this.player.anims.play('turn', true);
+        this.player1.setVelocityX(0);
+        this.player1.anims.play('turn', true);
       }
 
-      if (this.cursors.up.isDown && this.player.body.touching.down) {
-        this.player.setVelocityY(-330);
+      if (this.cursors.up.isDown && this.player1.body.touching.down) {
+        this.player1.setVelocityY(-330);
+      }
+
+      // Lógica de movimiento del jugador 2
+      if (this.wad.A.isDown) {
+        this.player2.setVelocityX(-160);
+        this.player2.anims.play('left2', true);
+        this.player2.flipX = true;
+      }
+      else if (this.wad.D.isDown) {
+        this.player2.setVelocityX(160);
+        this.player2.anims.play('right2', true);
+        this.player2.flipX = false;
+      }
+      else {
+        this.player2.setVelocityX(0);
+        this.player2.anims.play('turn2', true);
+      }
+
+      if (this.wad.W.isDown && this.player2.body.touching.down) {
+        this.player2.setVelocityY(-330);
       }
 
       if (gameTime.value <= 0) {
@@ -195,7 +275,9 @@ const config = {
 };
 
 function addRandomCoin(scene, coins, platforms) {
-  const maxAttempts = 10; // Número máximo de intentos para colocar la moneda
+  // Número máximo de intentos para colocar la moneda
+  const maxAttempts = 10; 
+  
   let placed = false;
 
   for (let i = 0; i < maxAttempts; i++) {

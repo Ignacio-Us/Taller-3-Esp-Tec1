@@ -2,28 +2,56 @@
     <Navbar />
     <div class="col-10 justify-content-center align-items-center m-auto">
 
-        <!-- Personaje Jugador 1-->
-        <div class="col-md-3 mt-5">
-            <h5 class="text-white text-center font-custom">
-                Seleccione un personaje
-                <br>
-                Jugador 1
-            </h5>
-            <div class="row mt-5">
-                <div class="col-md-2 p-5">
-                    <button @click="prev()" class="btn text-white border-2 border-white"> < </button>
-                </div>
+        <div class="row">
+            <!-- Personaje Jugador 1-->
+            <div class="col-md-3 mt-5">
+                <h5 class="text-white text-center font-custom">
+                    Seleccione un personaje
+                    <br>
+                    Jugador 1
+                </h5>
+                <div class="row mt-5">
+                    <div class="col-md-2 p-5">
+                        <button @click="prev1()" class="btn text-white border-2 border-white"> < </button>
+                    </div>
 
-                <div class="col-md-4">
-                    <div class="carousel">
-                        <Transition>
-                            <img :src="state" :key="state" />
-                        </Transition>
+                    <div class="col-md-4">
+                        <div class="carousel">
+                            <Transition>
+                                <img :src="state1" :key="state1" />
+                            </Transition>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2 pt-5">
+                        <button @click="next1()" class="btn text-white border-2 border-white"> > </button>
                     </div>
                 </div>
+            </div>
+            <!-- Personaje Jugador 2-->
+            <div class="col-md-3 offset-md-6 mt-5">
+                <h5 class="text-white text-center font-custom">
+                    Seleccione un personaje
+                    <br>
+                    Jugador 2
+                </h5>
+                <div class="row mt-5">
+                    <div class="col-md-2 p-5">
+                        <button @click="prev2()" class="btn text-white border-2 border-white">
+                            < </button>
+                    </div>
 
-                <div class="col-md-2 pt-5">
-                    <button @click="next()" class="btn text-white border-2 border-white"> > </button>
+                    <div class="col-md-4">
+                        <div class="carousel">
+                            <Transition>
+                                <img :src="state2" :key="state2" />
+                            </Transition>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2 pt-5">
+                        <button @click="next2()" class="btn text-white border-2 border-white"> > </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -53,7 +81,7 @@
 
         <div class="row justify-content-center mt-5">
             <div class="col-sm-1">
-                <button @click="saveCharacters()" class="btn btn-light fs-3">Play</button>
+                <button @click="saveData()" class="btn btn-light fs-3">Play</button>
             </div>
         </div>
     </div>
@@ -95,22 +123,34 @@ import { ref } from 'vue';
 
 const router = useRouter();
 
-const { state, next, prev } = useCycleList([
+const { state: state1, next: next1, prev: prev1 } = useCycleList([
     character1,
     character2,
     character3
 ]);
 
+const { state: state2, next: next2, prev: prev2 } = useCycleList([
+    character1,
+    character2,
+    character3
+]);
 
 const selectedMusic = ref('musica1');
 
-const selectMusic = async (music) => {
+const selectMusic = (music) => {
+    selectedMusic.value = music
+}
 
-    let musicPath
+const saveData = async () => {
+    const pathPlayer1 = state1.value.split('/').pop();
+    const pathPlayer2 = state2.value.split('/').pop();
 
-    selectedMusic.value = music;
+    sessionStorage.setItem('player1', pathPlayer1.replace('.png', ''));
+    sessionStorage.setItem('player2', pathPlayer2.replace('.png', ''));
 
-    switch (music) {
+    let musicPath;
+
+    switch (selectedMusic.value) {
         case 'musica1':
             musicPath = await import('../assets/game assets/music/Musica_de_fondo.mp3');
             break;
@@ -122,12 +162,6 @@ const selectMusic = async (music) => {
             break;
     }
     sessionStorage.setItem('musica', musicPath.default);
-}
-
-const saveCharacters = () => {
-    const pathImage = state.value.split('/').pop();
-
-    sessionStorage.setItem('player1', pathImage.replace('.png', ''));
     router.push({ path: '/game' });
 }
 
